@@ -1,11 +1,4 @@
 {
-  "platform": {
-    "nodeVersion": "20.x"
-  },
-  "globalHeaders": {
-    "X-Frame-Options": "DENY",
-    "X-XSS-Protection": "1; mode=block"
-  },
   "navigationFallback": {
     "rewrite": "/index.html"
   },

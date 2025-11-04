@@ -4,8 +4,7 @@ const nextConfig = {
   images: {
     unoptimized: true
   },
-  // Optional: Add basePath if you're using a subdirectory
-  // basePath: '/your-repo-name',
+  basePath: '', 
 }
 
 module.exports = nextConfig
