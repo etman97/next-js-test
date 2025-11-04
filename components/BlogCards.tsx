@@ -4,7 +4,18 @@
   import { useEffect, useState } from "react";
   import Cookies from "js-cookie";
 
-  export default function BlogCards({ article, onClose }) {
+  interface Article {
+    title?: string;
+    blogImage?: string;
+    content1?: string;
+    content2?: string;
+    diagram?: string;
+    paragraph1?: string;
+    paragraph2?: string;
+    paragraph3?: string;
+  }
+  
+  export default function BlogCards({ article, onClose }: { article: Article; onClose: () => void }) {
     const [isAdmin, setIsAdmin] = useState(false);
     const [isEditing, setIsEditing] = useState(false);
     const [editedArticle, setEditedArticle] = useState(article);
