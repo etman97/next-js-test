@@ -20,47 +20,44 @@ jobs:
           submodules: true
           lfs: false
       
-      # === ADD THESE BUILD STEPS HERE ===
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20'  # Adjust to your Node version
+          node-version: '20'
           cache: 'npm'
+      
+      - name: Debug - Check project structure
+        run: |
+          echo "📁 Project structure before build:"
+          ls -la
+          echo "📄 Package.json scripts:"
+          cat package.json | grep -A 10 '"scripts"'
       
       - name: Install dependencies
         run: npm ci
       
       - name: Build application
-        run: npm run build
-      
-      - name: Verify build folder exists
         run: |
-          echo "Checking if build folder was created:"
+          echo "🏗️ Starting build process..."
+          npm run build
+          echo "📁 After build structure:"
           ls -la
-          if [ -d "build" ]; then
-            echo "✅ Build folder exists"
-            ls -la build/
-          else
-            echo "❌ Build folder not found"
-            echo "Current directory contents:"
-            ls -la
-            exit 1
-          fi
-      # === END OF BUILD STEPS ===
+          echo "🔍 Looking for common build directories:"
+          [ -d "build" ] && echo "✅ Found: build" && ls -la build/
+          [ -d "dist" ] && echo "✅ Found: dist" && ls -la dist/
+          [ -d "out" ] && echo "✅ Found: out" && ls -la out/
+          [ -d "public" ] && echo "✅ Found: public" && ls -la public/
       
       - name: Build And Deploy
         id: builddeploy
         uses: Azure/static-web-apps-deploy@v1
         with:
           azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN_BRAVE_SAND_049044310 }}
-          repo_token: ${{ secrets.GITHUB_TOKEN }} # Used for Github integrations (i.e. PR comments)
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
           action: "upload"
-          ###### Repository/Build Configurations - These values can be configured to match your app requirements. ######
-          # For more information regarding Static Web App workflow configurations, please visit: https://aka.ms/swaworkflowconfig
-          app_location: "/" # App source code path
-          api_location: "" # Api source code path - optional
-          output_location: "build" # Built app content directory - optional
-          ###### End of Repository/Build Configurations ######
+          app_location: "/"
+          api_location: ""
+          output_location: "build" # We'll update this after we see the actual output
 
   close_pull_request_job:
     if: github.event_name == 'pull_request' && github.event.action == 'closed'
