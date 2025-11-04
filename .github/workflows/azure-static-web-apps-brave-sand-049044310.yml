@@ -19,6 +19,35 @@ jobs:
         with:
           submodules: true
           lfs: false
+      
+      # === ADD THESE BUILD STEPS HERE ===
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'  # Adjust to your Node version
+          cache: 'npm'
+      
+      - name: Install dependencies
+        run: npm ci
+      
+      - name: Build application
+        run: npm run build
+      
+      - name: Verify build folder exists
+        run: |
+          echo "Checking if build folder was created:"
+          ls -la
+          if [ -d "build" ]; then
+            echo "✅ Build folder exists"
+            ls -la build/
+          else
+            echo "❌ Build folder not found"
+            echo "Current directory contents:"
+            ls -la
+            exit 1
+          fi
+      # === END OF BUILD STEPS ===
+      
       - name: Build And Deploy
         id: builddeploy
         uses: Azure/static-web-apps-deploy@v1
