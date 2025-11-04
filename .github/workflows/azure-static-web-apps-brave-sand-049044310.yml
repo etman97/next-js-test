@@ -21,6 +21,22 @@ jobs:
           node-version: '20'
           cache: 'npm'
       
+      - name: Check Next.js configuration
+        run: |
+          echo "=== CHECKING NEXT.JS CONFIG ==="
+          if [ -f "next.config.js" ]; then
+            echo "✅ next.config.js exists"
+            cat next.config.js
+          else
+            echo "❌ next.config.js not found"
+          fi
+          
+          echo "=== CHECKING PACKAGE.JSON ==="
+          cat package.json
+          echo ""
+          echo "=== BUILD SCRIPTS ==="
+          npm run | grep "build" || echo "No build scripts found"
+      
       - name: Install dependencies
         run: npm ci
       
@@ -28,22 +44,57 @@ jobs:
         run: |
           echo "=== BEFORE BUILD ==="
           ls -la
+          echo ""
           
           echo "=== RUNNING BUILD ==="
-          npm run build || echo "Build command completed"
+          npm run build
+          echo "Build exit code: $?"
+          echo ""
           
           echo "=== AFTER BUILD ==="
           ls -la
+          echo ""
           
-          echo "=== CHECKING COMMON BUILD DIRECTORIES ==="
-          for dir in build dist out public .next .vuepress __sapper__; do
+          echo "=== CHECKING ALL POSSIBLE NEXT.JS OUTPUT DIRECTORIES ==="
+          for dir in build dist out public .next out_publish; do
             if [ -d "$dir" ]; then
               echo "✅ FOUND: $dir"
+              echo "Contents of $dir:"
               ls -la "$dir"
+              echo "---"
+              # Check for index.html in this directory
+              if [ -f "$dir/index.html" ]; then
+                echo "🎉 FOUND index.html in $dir - This is likely your output directory!"
+              fi
             else
               echo "❌ NOT FOUND: $dir"
             fi
+            echo ""
           done
           
-          echo "=== PACKAGE.JSON BUILD SCRIPT ==="
-          npm run | grep "build"
+          echo "=== CHECKING FOR HTML FILES ANYWHERE ==="
+          find . -name "index.html" -type f | head -20
+          echo ""
+          
+          echo "=== CHECKING NEXT.JS SPECIFIC FOLDERS ==="
+          if [ -d ".next" ]; then
+            echo "✅ .next folder exists (Next.js build folder)"
+            ls -la .next/
+            echo "Checking .next/server:"
+            ls -la .next/server/ 2>/dev/null || echo "No .next/server folder"
+            echo "Checking .next/static:"
+            ls -la .next/static/ 2>/dev/null || echo "No .next/static folder"
+          fi
+
+      - name: Check if static export is configured
+        run: |
+          echo "=== CHECKING FOR STATIC EXPORT CONFIG ==="
+          if [ -f "next.config.js" ]; then
+            if grep -q "output.*export" next.config.js || grep -q "output.*'export'" next.config.js; then
+              echo "✅ Static export configured in next.config.js"
+            else
+              echo "❌ Static export NOT configured. Next.js will build to .next folder"
+              echo "For Azure Static Web Apps, you need:"
+              echo "  output: 'export' in next.config.js"
+            fi
+          fi
