@@ -21,6 +21,22 @@ jobs:
           node-version: '20'
           cache: 'npm'
       
+      - name: Check Next.js configuration
+        run: |
+          echo "=== CHECKING NEXT.JS CONFIG ==="
+          if [ -f "next.config.js" ]; then
+            echo "✅ next.config.js exists"
+            cat next.config.js
+          else
+            echo "❌ next.config.js not found"
+          fi
+          
+          echo "=== CHECKING PACKAGE.JSON ==="
+          cat package.json
+          echo ""
+          echo "=== BUILD SCRIPTS ==="
+          npm run | grep "build" || echo "No build scripts found"
+      
       - name: Install dependencies
         run: npm ci
       
