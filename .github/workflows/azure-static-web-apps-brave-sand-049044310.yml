@@ -27,7 +27,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '18'  # Use your preferred Node version
+          node-version: '20'  # Use your preferred Node version
           cache: 'npm'
       
       - name: Install dependencies
@@ -74,3 +74,4 @@ jobs:
         uses: Azure/static-web-apps-deploy@v1
         with:
           action: "close"
+
