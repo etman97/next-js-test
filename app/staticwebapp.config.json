@@ -1,0 +1,16 @@
+{
+  "platform": {
+    "nodeVersion": "20.x"
+  },
+  "globalHeaders": {
+    "X-Frame-Options": "DENY",
+    "X-XSS-Protection": "1; mode=block"
+  },
+  "routes": [
+    {
+      "route": "/*",
+      "serve": "/out/*",
+      "statusCode": 200
+    }
+  ]
+}
