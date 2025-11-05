@@ -1,0 +1,84 @@
+name: Azure Static Web Apps CI/CD
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build_and_deploy_job:
+    runs-on: ubuntu-latest
+    name: Build and Deploy Job
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          submodules: true
+          lfs: false
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+      
+      - name: Check Next.js configuration
+        run: |
+          echo "=== CHECKING NEXT.JS CONFIG ==="
+          if [ -f "next.config.js" ]; then
+            echo "✅ next.config.js exists"
+            cat next.config.js
+          else
+            echo "❌ next.config.js not found"
+          fi
+          
+          echo "=== CHECKING PACKAGE.JSON ==="
+          cat package.json
+          echo ""
+          echo "=== BUILD SCRIPTS ==="
+          npm run | grep "build" || echo "No build scripts found"
+      
+      - name: Install dependencies
+        run: npm ci
+      
+      - name: Build Next.js application
+        run: |
+          echo "Building Next.js with static export..."
+          npm run build
+          echo "Build completed. Checking output:"
+          ls -la
+          echo "=== OUT FOLDER CONTENTS ==="
+          ls -la out/ || echo "No out folder yet"
+      
+      - name: Verify build output
+        run: |
+          # Wait a moment for build to complete
+          sleep 5
+          echo "Final verification:"
+          if [ -d "out" ]; then
+            echo "✅ OUT folder exists"
+            echo "Contents:"
+            ls -la out/
+            if [ -f "out/index.html" ]; then
+              echo "🎉 SUCCESS: index.html found in out folder!"
+            else
+              echo "❌ index.html not found in out folder"
+            fi
+          else
+            echo "❌ OUT folder not found - creating manual structure"
+            mkdir -p out
+            # If .next exists, copy appropriate files
+            if [ -d ".next" ]; then
+              cp -r .next/static out/ 2>/dev/null || true
+            fi
+          fi
+      
+      - name: Deploy to Azure Static Web Apps
+        uses: Azure/static-web-apps-deploy@v1
+        with:
+          azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN_BRAVE_SAND_049044310 }}
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          action: "upload"
+          app_location: "/"
+          api_location: ""
+          output_location: "out"  # Next.js static export uses 'out'
+          app_build_command: "npm run build"

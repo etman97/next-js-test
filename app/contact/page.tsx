@@ -34,7 +34,7 @@ export default function Page() {
               <div className="text-white rounded-full">
                 <Image src="/smartphone.png" alt="phone" width={24} height={24} />
               </div>
-              <div className="flex gap-8 lg:gap-20" dir="ltr">
+              <div className="flex gap-8 lg:gap-20">
                 <h1 className="text-white text-lg">056 088 8705</h1>
                 <h1 className="text-white text-lg">055 004 7964</h1>
                 <h1 className="text-white text-lg">056 088 8705</h1>

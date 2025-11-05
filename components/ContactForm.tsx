@@ -11,6 +11,7 @@ export default function ContactForm() {
   const pathname = usePathname();
   const isEnglish = pathname.includes("/en");
 
+  // ✅ النصوص حسب اللغة
   const t = {
     title: isEnglish ? "Contact Us" : "تواصل معنا",
     firstName: isEnglish ? "First Name" : "الاسم الأول",
@@ -19,26 +20,20 @@ export default function ContactForm() {
     email: isEnglish ? "Email" : "البريد الإلكتروني",
     selectService: isEnglish ? "Select a Service" : "اختر الخدمة المطلوبة",
     service1: isEnglish
-      ? "broom"
-      : "  شركة برووم",
+      ? "Heavy Equipment Service"
+      : "خدمة المعدات الثقيلة",
     service2: isEnglish
-      ? "mawroth  "
-      : " موروث",
+      ? "Maintenance and Support"
+      : "خدمة الصيانة والدعم",
     service3: isEnglish
-      ? "mq "
-      : "  شركة ام كيو",
+      ? "Technical Consultation"
+      : "خدمة الاستشارات الفنية",
     service4: isEnglish
-      ? "Professional Furnishings Factory"
-      : " مصنع التجهيزات الاحترافية ",
+      ? "Long-Term Rental"
+      : "خدمة التأجير طويل الأمد",
     service5: isEnglish
-      ? "  Sanad Limited for Management Consulting "
-      : "سند المحدودة للاستشارات الإدارية   ",
-        service6: isEnglish
-      ? "  Azia     "
-      : "عذية ",
-         service7: isEnglish
-      ? "  Sanad Limited for Property Management  "
-      : "  سند المحدودة لإدارة الأملاك     ",
+      ? "After-Sales Services"
+      : "خدمات ما بعد البيع",
     message: isEnglish ? "Write your message here..." : "اكتب رسالتك هنا...",
     send: isEnglish ? "Send Message" : "إرسال الرسالة",
     sending: isEnglish ? "Sending..." : "جاري الإرسال...",
@@ -177,7 +172,7 @@ export default function ContactForm() {
               <Field
                 as="select"
                 name="option"
-                className="w-full border bg-white border-gray-300 p-2 rounded text-sm focus:outline-none focus:border-[#a87a44] "
+                className="w-full border bg-white border-gray-300 p-2 rounded text-sm focus:outline-none focus:border-[#a87a44]"
               >
                 <option value="">{t.selectService}</option>
                 <option value="service1">{t.service1}</option>
@@ -185,9 +180,6 @@ export default function ContactForm() {
                 <option value="service3">{t.service3}</option>
                 <option value="service4">{t.service4}</option>
                 <option value="service5">{t.service5}</option>
-               <option value="service5">{t.service6}</option>
-                <option value="service5">{t.service7}</option>
-
               </Field>
               <ErrorMessage
                 name="option"

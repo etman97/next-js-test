@@ -18,7 +18,7 @@ export default function Page() {
         </div>
         <div className="flex flex-col max-w-[600px] gap-4 text-center md:text-right">
           <h1 className="text-[36px] sm:text-[48px] md:text-[52px] text-white font-bold leading-tight">
-            سند المحدودة للاستشارات الإدارية وخدمات التدريب والتعليم
+            سند المحدودة للاستشارات الإدارية وخدمات التدريب والتعليم{" "}
           </h1>
           <p className="text-white text-[16px] sm:text-[18px] leading-relaxed">
             الأكاديمية والارتقاء بمخرجات المؤسسات وفق التصنيفات الوطنية

@@ -34,14 +34,14 @@ export default function Navbar() {
     ? [
               { href: "/contact/en", label: "Contact" },
         { href: "/our-clients/en", label: "Our Clients" },
-        { href: "/blogs/en", label: "Blogs" },
+        { href: "/blog/en", label: "Blog" },
                 { href: "/about/en", label: "About" },
         { href: "/en", label: "Home" },
       ]
     : [
         { href: "/contact", label: "تواصل معنا" },
         { href: "/our-clients", label: "عملائنا" },
-        { href: "/blogs", label: "مدونة" },
+        { href: "/blog", label: "مدونة" },
         { href: "/about", label: "نبذة عنا" },
         { href: "/", label: "الرئيسية" },
       ];

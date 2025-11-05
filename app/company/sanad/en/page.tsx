@@ -9,17 +9,18 @@ export default function Page() {
        justify-between items-center w-screen min-h-screen px-6 sm:px-10 md:px-20 lg:px-40"
       dir="ltr"
     >
+    
       <div className="flex flex-col md:flex-row gap-10 items-center justify-center w-[90%] h-screen pt-24 md:pt-32 md:w-full z-10 md:gap-20 lg:gap-40">
-        <Image
-          src="/background/sanad.png"
-          fill
-          className="absolute w-screen h-screen hidden md:block"
-          alt="Sanad"
-        />
-
-        <div className="absolute inset-0 z-30 opacity-40">
-          <Bgsvg />
-        </div>
+             <Image
+                        src="/background/sanad.png"
+                        fill
+                        className="absolute w-screen h-screen hidden md:block"
+                        alt="Sanad"
+                      />
+              
+                      <div className="absolute inset-0 z-30 opacity-40">
+                        <Bgsvg />
+                      </div>
         <div className="flex flex-col max-w-[600px] gap-4 text-center md:text-left ">
           <h1 className="text-[36px] sm:text-[48px] md:text-[46px] text-white font-bold leading-tight">
             Sanad Limited for Management Consulting and Training Services{" "}

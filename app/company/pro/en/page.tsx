@@ -23,7 +23,7 @@ export default function Page() {
                   </div>
         <div className="flex flex-col max-w-[600px] gap-4 text-center md:text-left ">
           <h1 className="text-[36px] sm:text-[48px] md:text-[58px] text-white font-bold leading-tight">
-            Professional Furnishings Factory
+            Professional Furnishings Factory{" "}
           </h1>
           <p className="text-white text-[16px] sm:text-[18px] leading-relaxed">
             A national establishment operating in the field of furniture
