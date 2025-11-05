@@ -10,7 +10,7 @@ import CreateBlog from "@/components/CreateArticle";
 
 export default function Page() {
   const [articles, setArticles] = useState<any[]>([]);
-  const [selectedArticle, setSelectedArticle] = useState<number | null>(null); 
+  const [selectedArticle, setSelectedArticle] = useState<any | null>(null); 
   const [isAdmin, setIsAdmin] = useState(false);
   const [showCreate, setShowCreate] = useState(false);
   const [blogsLoading, setBlogsLoading] = useState(true);
@@ -54,13 +54,12 @@ const fetchArticles = async () => {
 
   return (
     <div className="flex flex-col md:gap-10 relative">
-      {selectedArticle && (
+          {selectedArticle && (
         <div className="fixed inset-0 flex items-center justify-center z-50">
           <div className="w-[60%] h-[60%] bg-transparent">
             <BlogCards
-              articleId={selectedArticle}
-              onClose={() => setSelectedArticle(null)}
-                onUpdate={fetchArticles} 
+                  article={selectedArticle}
+                  onClose={() => setSelectedArticle(null)}
 
 
             />
