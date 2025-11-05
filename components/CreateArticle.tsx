@@ -4,9 +4,10 @@ import { useState } from "react";
 
 interface CreateArticleProps {
   onClose: () => void;
+  onSuccess?: () => void;
 }
 
-export default function CreateBlog({ onClose }: CreateArticleProps) {
+export default function CreateBlog({ onClose, onSuccess }: CreateArticleProps) {
   const [title, setTitle] = useState("");
   const [content1, setContent1] = useState("");
   const [content2, setContent2] = useState("");
@@ -42,7 +43,12 @@ export default function CreateBlog({ onClose }: CreateArticleProps) {
 
       if (!res.ok) throw new Error("Failed to create article");
       alert("Article created successfully!");
-      onClose();
+      // prefer parent callback if provided so it can refresh data
+      if (onSuccess) {
+        onSuccess();
+      } else {
+        onClose();
+      }
     } catch (err) {
       console.error(err);
       alert("Error creating article");
