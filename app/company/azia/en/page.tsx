@@ -1,0 +1,171 @@
+"use client";
+import Bgsvg from "@/components/Bgsvg";
+import BlogCards from "@/components/BlogCards";
+import { motion } from "framer-motion";
+import Image from "next/image";
+import { useEffect, useState } from "react";
+import Cookies from "js-cookie";
+import CreateBlog from "@/components/CreateArticle";
+
+export default function Page() {
+  const [articles, setArticles] = useState<any[]>([]);
+  const [selectedArticle, setSelectedArticle] = useState<number | null>(null);
+  const [isAdmin, setIsAdmin] = useState(false);
+  const [showCreate, setShowCreate] = useState(false);
+  const [blogsLoading, setBlogsLoading] = useState(true);
+
+  const fetchArticles = async () => {
+    try {
+      setBlogsLoading(true);
+      const res = await fetch("/api/blogs"); 
+      
+      if (!res.ok) {
+        console.log("API route failed, trying direct fetch...");
+        const directRes = await fetch(
+          "https://blog-q-gvcyhxgqehbrh5b7.canadacentral-01.azurewebsites.net/api/Blogs"
+        );
+        
+        if (directRes.ok) {
+          const data = await directRes.json();
+          setArticles(data);
+          return;
+        }
+        throw new Error("Failed to fetch blogs from all sources");
+      }
+      
+      const data = await res.json();
+      setArticles(data);
+    } catch (err) {
+      console.error("All fetch attempts failed:", err);
+      setArticles([]); 
+    } finally {
+      setBlogsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchArticles();
+    const token = Cookies.get("adminAuth");
+    if (token) setIsAdmin(true);
+  }, []);
+
+  return (
+    <div className="flex flex-col md:gap-10 relative" dir="ltr">
+      {/* BlogCards Modal */}
+      {selectedArticle && (
+        <div className="fixed inset-0 flex items-center justify-center z-50">
+          <div className="w-[60%] h-[60%] bg-transparent">
+            <BlogCards
+              articleId={selectedArticle}
+              onClose={() => setSelectedArticle(null)}
+              onUpdate={fetchArticles}
+            />
+          </div>
+        </div>
+      )}
+
+      {/* Create Blog Modal */}
+      {showCreate && (
+        <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-[999]">
+          <div className="relative w-[80%] h-[70%] lg:w-[50%] bg-white rounded-2xl shadow-2xl overflow-hidden mt-20">
+            <CreateBlog
+              onClose={() => setShowCreate(false)}
+              onSuccess={() => {
+                setShowCreate(false);
+                fetchArticles();
+              }}
+            />
+          </div>
+        </div>
+      )}
+
+      {/* Hero Section */}
+      <div className="relative flex items-center justify-center min-h-screen overflow-hidden bg-[#444444]">
+        <Image src="/bgblog2.jpg" fill className="opacity-50" alt="bg-blog" />
+        <div className="absolute inset-0 bg-black/50 z-10" />
+        <div className="absolute inset-0 py-[15%]">
+          <Bgsvg />
+        </div>
+
+        <motion.div
+          initial={{ opacity: 0, y: 80 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 1.2, ease: "easeOut" }}
+          className="relative z-40 flex flex-col justify-center items-start gap-10 lg:gap-10 px-6"
+        >
+          <div className="w-full max-w-[590px] text-white drop-shadow-lg text-center lg:text-left md:pt-12">
+            <h1 className="font-amiri font-bold text-[36px] sm:text-[42px] md:text-[52px] lg:text-[60px] tracking-tight leading-[1.1]">
+              <span className="goldenText2">Our </span>
+              <span className="goldenText3">Clients</span>
+            </h1>
+          </div>
+
+          <div className="flex flex-col lg:flex-row justify-start items-start gap-10 xl:gap-40 w-full max-w-[1200px]">
+            <p className="w-full md:w-[400px] xl:w-[530px] font-[500] font-alexandria text-white text-[18px] leading-[1.8] text-center lg:text-left">
+              At Al-Qadib Blog, we share our vision of the future of business and
+              investment in the Kingdom, offering rich, insightful content that
+              highlights the latest economic trends, modern technologies, and
+              development strategies across various sectors.
+            </p>
+            <p className="w-full md:w-[400px] xl:w-[530px] font-[500] font-alexandria text-white text-[18px] leading-[1.8] text-center lg:text-left">
+              Through this blog, we aim to be a source of inspiration and
+              reliable information for decision-makers, entrepreneurs, and
+              business enthusiasts, through analytical articles and real-world
+              studies that reflect our expertise and experience in the Saudi
+              market.
+            </p>
+          </div>
+        </motion.div>
+      </div>
+
+      {/* Articles Grid */}
+      <div className="py-10 text-center text-white text-xl">
+        {blogsLoading ? (
+          <div className="flex justify-center items-center py-20">
+            <div className="text-white">Loading blogs...</div>
+          </div>
+        ) : articles.length > 0 ? (
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 justify-center">
+            {articles.map((article) => (
+              <div
+                key={article.id}
+                className="flex flex-col items-center cursor-pointer transform transition-transform hover:scale-105 
+                         w-full max-w-[610px] h-[246px] mx-auto bg-transparent"
+                onClick={() => {
+                  setSelectedArticle(article.id); 
+                  console.log(article.id)
+                }}>
+                <img
+                  src={article.imageUrl1?.replace(
+                    "https://localhost:7036",
+                    "https://blog-q-gvcyhxgqehbrh5b7.canadacentral-01.azurewebsites.net"
+                  )}
+                  alt={article.title}
+                  width={610}
+                  height={246}
+                  className="rounded-lg shadow-lg object-cover max-h-[280px] w-[420px] md:w-[540px] lg:w-[610px]"
+                />
+                <h2 className="text-white mt-4 text-xl font-bold text-center">
+                  {article.title}
+                </h2>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <div className="text-white py-20">No blogs available</div>
+        )}
+
+        {isAdmin && (
+          <div className="pt-32">
+            <button
+              onClick={() => setShowCreate(true)}
+              className="bg-white text-black px-6 py-2 rounded-lg font-bold hover:bg-yellow-400 transition"
+            >
+              Create Article
+            </button>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
