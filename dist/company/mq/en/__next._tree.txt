@@ -1,0 +1,17 @@
+1:"$Sreact.fragment"
+2:I[97367,["/_next/static/chunks/ff1a16fafef87110.js","/_next/static/chunks/247eb132b7f7b574.js"],"ViewportBoundary"]
+4:I[97367,["/_next/static/chunks/ff1a16fafef87110.js","/_next/static/chunks/247eb132b7f7b574.js"],"MetadataBoundary"]
+5:"$Sreact.suspense"
+:HL["/_next/static/chunks/50f2b3caa7faea55.css","style"]
+:HL["/_next/static/media/05d29f0ed5b0e698-s.p.6d7a8113.woff2","font",{"crossOrigin":"","type":"font/woff2"}]
+:HL["/_next/static/media/1062333f2bd32cfe-s.p.7f0fdb38.woff2","font",{"crossOrigin":"","type":"font/woff2"}]
+:HL["/_next/static/media/291696193ea1e96b-s.p.6ef5e8dc.woff2","font",{"crossOrigin":"","type":"font/woff2"}]
+:HL["/_next/static/media/4ce61fe437b63f55-s.p.57c23c89.woff2","font",{"crossOrigin":"","type":"font/woff2"}]
+:HL["/_next/static/media/57696fb0c8dcfe1f-s.p.cb67e064.woff2","font",{"crossOrigin":"","type":"font/woff2"}]
+:HL["/_next/static/media/648474ecaeaf4c9a-s.p.caba5483.woff2","font",{"crossOrigin":"","type":"font/woff2"}]
+:HL["/_next/static/media/890431f0a0104557-s.p.2aa14085.woff2","font",{"crossOrigin":"","type":"font/woff2"}]
+:HL["/_next/static/media/8f2ca9bed5019488-s.p.890835da.woff2","font",{"crossOrigin":"","type":"font/woff2"}]
+:HL["/_next/static/media/ecc51711236713ee-s.p.58cc40de.woff2","font",{"crossOrigin":"","type":"font/woff2"}]
+0:{"buildId":"g5EmCKUE5XJ_elu2DyC_F","tree":{"name":"","paramType":null,"paramKey":"","hasRuntimePrefetch":false,"slots":{"children":{"name":"company","paramType":null,"paramKey":"company","hasRuntimePrefetch":false,"slots":{"children":{"name":"mq","paramType":null,"paramKey":"mq","hasRuntimePrefetch":false,"slots":{"children":{"name":"en","paramType":null,"paramKey":"en","hasRuntimePrefetch":false,"slots":{"children":{"name":"__PAGE__","paramType":null,"paramKey":"__PAGE__","hasRuntimePrefetch":false,"slots":null,"isRootLayout":false}},"isRootLayout":false}},"isRootLayout":false}},"isRootLayout":false}},"isRootLayout":true},"head":["$","$1","h",{"children":[null,["$","$L2",null,{"children":"$@3"}],["$","div",null,{"hidden":true,"children":["$","$L4",null,{"children":["$","$5",null,{"name":"Next.Metadata","children":"$@6"}]}]}],["$","meta",null,{"name":"next-size-adjust","content":""}]]}],"isHeadPartial":false,"staleTime":300}
+3:[["$","meta","0",{"charSet":"utf-8"}],["$","meta","1",{"name":"viewport","content":"width=device-width, initial-scale=1"}]]
+6:[]

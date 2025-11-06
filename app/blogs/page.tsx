@@ -19,27 +19,18 @@ export default function Page() {
 const fetchArticles = async () => {
   try {
     setBlogsLoading(true);
-    const res = await fetch("/api/blogs"); 
+    const res = await fetch(
+      "https://blog-q-gvcyhxgqehbrh5b7.canadacentral-01.azurewebsites.net/api/Blogs"
+    );
     
     if (!res.ok) {
-      console.log("API route failed, trying direct fetch...");
-      // جرب fetch مباشر كحل بديل
-      const directRes = await fetch(
-        "https://blog-q-gvcyhxgqehbrh5b7.canadacentral-01.azurewebsites.net/api/Blogs"
-      );
-      
-      if (directRes.ok) {
-        const data = await directRes.json();
-        setArticles(data);
-        return;
-      }
-      throw new Error("Failed to fetch blogs from all sources");
+      throw new Error("Failed to fetch blogs");
     }
     
     const data = await res.json();
     setArticles(data);
   } catch (err) {
-    console.error("All fetch attempts failed:", err);
+    console.error("Failed to fetch blogs:", err);
     setArticles([]); 
   } finally {
     setBlogsLoading(false);
