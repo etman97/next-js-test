@@ -2,18 +2,14 @@ name: Azure Static Web Apps CI/CD
 
 on:
   push:
-    branches:
-      - main
+    branches: [ main ]
   pull_request:
-    branches:
-      - main
+    branches: [ main ]
   workflow_dispatch:
 
 jobs:
   build_and_deploy_job:
-    name: Build and deploy job
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -22,7 +18,7 @@ jobs:
           submodules: recursive
           persist-credentials: true
 
-      - name: Use Node.js 20.9.0
+      - name: Use Node.js 20.x
         uses: actions/setup-node@v4
         with:
           node-version: "20.9.0"
@@ -32,44 +28,32 @@ jobs:
         run: npm ci
 
       - name: Build (Next.js)
-        run: |
-          npm run build
+        run: npm run build
+        env:
+          CI: true
 
-      - name: Export Next.js to static 'out' (if using static export)
-        # If your project uses `next export`, run its script to produce the 'out' folder
+      - name: Export Next.js to static 'out'
         run: |
+          # Run export if script exists. Prefer an explicit `export` script in package.json:
           if npm run | grep -q "export"; then
             npm run export
           else
-            echo "No 'export' script found. If you expect a static 'out' folder, add an 'export' script to package.json (e.g. 'export': 'next export') or adjust output_location."
+            echo "No 'export' script found. To create static export add: 'export': 'next export' in package.json or change this step to run the command you use to produce static output."
+            exit 1
           fi
 
-      - name: Fix workspace ownership if needed
-        if: ${{ always() }}
+      - name: Show output folder contents (debug)
         run: |
-          echo "Repairing ownership for workspace and .git if necessary"
-          sudo chown -R $(whoami) .
-          ls -la .git || true
-          ls -la .git/config || true
-
-      - name: Debug workspace (permissions & git config)
-        if: ${{ always() }}
-        run: |
-          echo "PWD: $(pwd)"
+          echo "Workspace:"
           ls -la
-          ls -la .git || true
-          ls -la .git/config || true
-          git --version
-          git config --list --show-origin || true
+          echo "Contents of out (should contain index.html):"
+          ls -la out || true
 
-      - name: Ensure Azure Static Web Apps token exists
+      - name: Ensure Azure token exists
         run: |
           if [ -z "${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN }}" ]; then
-            echo "ERROR: Secret AZURE_STATIC_WEB_APPS_API_TOKEN is not set in repository secrets."
-            echo "Add your deployment token as a repository secret named AZURE_STATIC_WEB_APPS_API_TOKEN and re-run the workflow."
+            echo "ERROR: AZURE_STATIC_WEB_APPS_API_TOKEN secret is missing. Add the token to Repository Settings → Secrets and variables → Actions."
             exit 1
-          else
-            echo "Azure deployment secret found."
           fi
 
       - name: Deploy to Azure Static Web Apps
@@ -78,14 +62,10 @@ jobs:
           azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN }}
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           action: "upload"
-          app_location: "/"        # adjust if your app is in a subfolder
+          app_location: "/"        # adjust if your app sits in a subfolder
           api_location: ""         # set if you have Azure Functions
-          output_location: "out"   # for Next.js static export (next export) -> out
-          # Optional: if you want the run to continue without failing when the secret is absent,
-          # uncomment the next line:
-          # skip_deploy_on_missing_secrets: true
+          output_location: "out"   # the folder produced by `next export`
 
       - name: Post-deploy info
         if: ${{ always() }}
-        run: |
-          echo "Workflow finished with status ${{ job.status }}."
+        run: echo "Job finished with status ${{ job.status }}."
