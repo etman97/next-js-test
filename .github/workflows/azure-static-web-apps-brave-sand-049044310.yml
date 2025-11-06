@@ -18,7 +18,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: '18.x'
           cache: 'npm'
       
       - name: Check Next.js configuration
@@ -81,4 +81,5 @@ jobs:
           app_location: "/"
           api_location: ""
           output_location: "out"  # Next.js static export uses 'out'
+
           app_build_command: "npm run build"
