@@ -18,26 +18,23 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0             # full history (helps submodules)
-          submodules: recursive      # initialize submodules recursively
-          persist-credentials: true  # keep credentials so git can remove extraheader
+          fetch-depth: 0
+          submodules: recursive
+          persist-credentials: true
 
-      - name: Use Node.js 18.x
+      - name: Use Node.js 20.9.0
         uses: actions/setup-node@v4
         with:
-          node-version: "18"
+          node-version: "20.9.0"
+          cache: "npm"
 
       - name: Install dependencies
-        run: |
-          npm ci
+        run: npm ci
 
       - name: Build
-        run: |
-          npm run build
-
-      # Optional: if you use `next export` to produce a static site
-      # - name: Export Next.js (uncomment if you use next export)
-      #   run: npm run export
+        run: npm run build
+        env:
+          CI: true
 
       - name: Debug workspace (permissions & git config)
         if: ${{ always() }}
@@ -52,15 +49,14 @@ jobs:
       - name: Deploy to Azure Static Web Apps
         uses: Azure/static-web-apps-deploy@v1
         with:
-          azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN }} # set this secret in repo settings
+          azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN }}
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           action: "upload"
-          app_location: "/"        # App location relative to repo root (adjust if your app is in a subfolder)
-          api_location: ""         # Set to "api" if you have Azure Functions backend
-          output_location: "out"   # For Next.js static export use "out"; adjust if your build outputs elsewhere
+          app_location: "/"        # adjust if your app is in a subfolder
+          api_location: ""         # set if you have Azure Functions
+          output_location: "out"   # adjust for your build output (Next.js static export -> out)
 
       - name: Post-deploy info
         if: ${{ always() }}
         run: |
           echo "Workflow finished with status ${{ job.status }}."
-          echo "If deployment failed, check the 'Debug workspace' step above for permission issues."
