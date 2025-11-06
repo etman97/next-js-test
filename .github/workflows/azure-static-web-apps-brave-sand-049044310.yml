@@ -4,83 +4,63 @@ on:
   push:
     branches:
       - main
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
 
 jobs:
   build_and_deploy_job:
+    name: Build and deploy job
     runs-on: ubuntu-latest
-    name: Build and Deploy Job
+
     steps:
-      - uses: actions/checkout@v3
+      - name: Checkout repository
+        uses: actions/checkout@v4
         with:
-          submodules: true
-          lfs: false
-      
-      - name: Setup Node.js
+          fetch-depth: 0             # full history (helps submodules)
+          submodules: recursive      # initialize submodules recursively
+          persist-credentials: true  # keep credentials so git can remove extraheader
+
+      - name: Use Node.js 18.x
         uses: actions/setup-node@v4
         with:
-          node-version: '20.9.0'
-          cache: 'npm'
-      
-      - name: Check Next.js configuration
-        run: |
-          echo "=== CHECKING NEXT.JS CONFIG ==="
-          if [ -f "next.config.js" ]; then
-            echo "✅ next.config.js exists"
-            cat next.config.js
-          else
-            echo "❌ next.config.js not found"
-          fi
-          
-          echo "=== CHECKING PACKAGE.JSON ==="
-          cat package.json
-          echo ""
-          echo "=== BUILD SCRIPTS ==="
-          npm run | grep "build" || echo "No build scripts found"
-      
+          node-version: "18"
+
       - name: Install dependencies
-        run: npm ci
-      
-      - name: Build Next.js application
         run: |
-          echo "Building Next.js with static export..."
+          npm ci
+
+      - name: Build
+        run: |
           npm run build
-          echo "Build completed. Checking output:"
-          ls -la
-          echo "=== OUT FOLDER CONTENTS ==="
-          ls -la out/ || echo "No out folder yet"
-      
-      - name: Verify build output
+
+      # Optional: if you use `next export` to produce a static site
+      # - name: Export Next.js (uncomment if you use next export)
+      #   run: npm run export
+
+      - name: Debug workspace (permissions & git config)
+        if: ${{ always() }}
         run: |
-          # Wait a moment for build to complete
-          sleep 5
-          echo "Final verification:"
-          if [ -d "out" ]; then
-            echo "✅ OUT folder exists"
-            echo "Contents:"
-            ls -la out/
-            if [ -f "out/index.html" ]; then
-              echo "🎉 SUCCESS: index.html found in out folder!"
-            else
-              echo "❌ index.html not found in out folder"
-            fi
-          else
-            echo "❌ OUT folder not found - creating manual structure"
-            mkdir -p out
-            # If .next exists, copy appropriate files
-            if [ -d ".next" ]; then
-              cp -r .next/static out/ 2>/dev/null || true
-            fi
-          fi
-      
+          echo "PWD: $(pwd)"
+          ls -la
+          ls -la .git || true
+          ls -la .git/config || true
+          git --version
+          git config --list --show-origin || true
+
       - name: Deploy to Azure Static Web Apps
         uses: Azure/static-web-apps-deploy@v1
         with:
-          azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN_BRAVE_SAND_049044310 }}
+          azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN }} # set this secret in repo settings
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           action: "upload"
-          app_location: "/"
-          api_location: ""
-          output_location: "out"  # Next.js static export uses 'out'
+          app_location: "/"        # App location relative to repo root (adjust if your app is in a subfolder)
+          api_location: ""         # Set to "api" if you have Azure Functions backend
+          output_location: "out"   # For Next.js static export use "out"; adjust if your build outputs elsewhere
 
-          app_build_command: "npm run build"
-
+      - name: Post-deploy info
+        if: ${{ always() }}
+        run: |
+          echo "Workflow finished with status ${{ job.status }}."
+          echo "If deployment failed, check the 'Debug workspace' step above for permission issues."
