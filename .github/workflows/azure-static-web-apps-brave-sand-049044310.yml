@@ -46,18 +46,27 @@ jobs:
           git --version
           git config --list --show-origin || true
 
+      - name: Ensure Azure Static Web Apps token exists
+        run: |
+          if [ -z "${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN }}" ]; then
+            echo "ERROR: Secret AZURE_STATIC_WEB_APPS_API_TOKEN is not set in repository secrets."
+            echo "Add your deployment token as a repository secret named AZURE_STATIC_WEB_APPS_API_TOKEN and re-run the workflow."
+            exit 1
+          fi
+
       - name: Deploy to Azure Static Web Apps
         uses: Azure/static-web-apps-deploy@v1
         with:
-          azure_static_web_apps_api_token: ${{ 6ea3c9a14d9a2889b469f4dae928dd9125049801be61a4f1097f4859780cd24303-e76d3572-d3f2-41d4-a979-b49ef52143ab0101631049044310 }}
+          azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN }}
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           action: "upload"
           app_location: "/"        # adjust if your app is in a subfolder
           api_location: ""         # set if you have Azure Functions
           output_location: "out"   # adjust for your build output (Next.js static export -> out)
+          # If you prefer to skip deployment when the secret is missing, set:
+          # skip_deploy_on_missing_secrets: true
 
       - name: Post-deploy info
         if: ${{ always() }}
         run: |
           echo "Workflow finished with status ${{ job.status }}."
-
